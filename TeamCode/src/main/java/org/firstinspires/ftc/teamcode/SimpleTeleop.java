@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="SimpleTeleop", group="Linear OpMode")
-public class SimpleTeleop extends LinearOpMode {
+public class SimpleTeleop extends LinearOpMode { //byierukbfhuiojkwu
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -74,6 +74,7 @@ public class SimpleTeleop extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake_motor");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
+        // a;ldsfkj;aslkdfj
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
