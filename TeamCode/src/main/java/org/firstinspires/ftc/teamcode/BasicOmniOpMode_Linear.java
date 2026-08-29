@@ -73,16 +73,19 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
+    private DcMotor intake = null;
+
 
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drives");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        intake = hardwareMap.get(DcMotor.class, "intake_motor");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -107,6 +110,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        int intake_state = 0;
+        int intake_toggled = 0;
 
         waitForStart();
         runtime.reset();
@@ -138,6 +143,21 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 frontRightPower /= max;
                 backLeftPower   /= max;
                 backRightPower  /= max;
+            }
+            if(gamepad1.right_trigger_pressed&&intake_toggled==0){
+                intake_toggled = 1;
+                if(intake_state == 0){
+                    intake.setPower(1);
+
+                    intake_state = 1;
+                }else{
+                    intake.setPower(0);
+
+                    intake_state = 0;
+                }
+
+            }else if(!gamepad1.right_trigger_pressed){
+                intake_toggled = 0;
             }
 
             // This is test code:
