@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.source.tree.IfTree;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -147,7 +148,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if(gamepad1.right_trigger_pressed&&intake_toggled==0){
                 intake_toggled = 1;
                 if(intake_state == 0){
-                    intake.setPower(1);
+                    intake.setPower(0.8);
 
                     intake_state = 1;
                 }else{
