@@ -113,6 +113,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.update();
         int intake_state = 0;
         int intake_toggled = 0;
+        double drive_speed_max = 1;
+
 
         waitForStart();
         runtime.reset();
@@ -160,7 +162,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }else if(!gamepad1.right_trigger_pressed){
                 intake_toggled = 0;
             }
+            if (gamepad1.left_stick_button){
+               drive_speed_max = 0.25;
+            } else {drive_speed_max = 1;
 
+            }
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
@@ -179,10 +185,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            frontLeftDrive.setPower(frontLeftPower);
-            frontRightDrive.setPower(frontRightPower);
-            backLeftDrive.setPower(backLeftPower);
-            backRightDrive.setPower(backRightPower);
+            frontLeftDrive.setPower(frontLeftPower*drive_speed_max);
+            frontRightDrive.setPower(frontRightPower*drive_speed_max);
+            backLeftDrive.setPower(backLeftPower*drive_speed_max);
+            backRightDrive.setPower(backRightPower*drive_speed_max);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
