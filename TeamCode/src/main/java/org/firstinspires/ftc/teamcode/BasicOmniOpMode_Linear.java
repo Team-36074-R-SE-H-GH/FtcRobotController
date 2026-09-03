@@ -150,7 +150,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if(gamepad1.right_trigger_pressed&&intake_toggled==0){
                 intake_toggled = 1;
                 if(intake_state == 0){
-                    intake.setPower(0.8);
+                    intake.setPower(0.7);
 
                     intake_state = 1;
                 }else{
