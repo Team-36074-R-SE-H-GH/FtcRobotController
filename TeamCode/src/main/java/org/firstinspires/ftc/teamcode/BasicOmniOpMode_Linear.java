@@ -156,7 +156,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if(gamepad1.right_trigger_pressed&&intake_toggled==0){
                 intake_toggled = 1;
                 if(intake_state == 0){
-                    intake.setPower(0.8);
+                    intake.setPower(0.7);
 
                     intake_state = 1;
                 }else{
@@ -170,8 +170,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
             if (gamepad1.left_stick_button){
                drive_speed_max = 0.25;
-            } else {drive_speed_max = 1;
-
+            } else {
+                drive_speed_max = 1;
             }
             // This is test code:
             //
@@ -200,6 +200,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+            telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
             telemetry.update();
         }
     }}
