@@ -29,14 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.sun.source.tree.IfTree;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -68,8 +65,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+@TeleOp(name="MainTeleop", group="Linear OpMode")
+public class MainTeleop extends LinearOpMode {
      AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -134,8 +131,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             aprilTagWebcam.update();
-            AprilTagDetection id20 = aprilTagWebcam.getTagBySpecificID(20);
-            aprilTagWebcam.displayDetectionTelemetry(id20);
+            AprilTagDetection id583 = aprilTagWebcam.getTagBySpecificID(583);
+            aprilTagWebcam.displayDetectionTelemetry(id583);
 
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -190,28 +187,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 indexer.setPower(-0.5);
             }
             if(gamepad1.b){
-                shooter.setPower(1);
+                shooter.setPower(0.7);
             }
             else{
                 shooter.setPower(-0);
             }
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower*drive_speed_max);
