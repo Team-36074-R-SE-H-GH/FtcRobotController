@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -53,12 +55,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Auto2", group="Robot")
+@Autonomous(name="Auto3", group="Robot")
 public class autotest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor shooter = null;
+    private CRServo indexer;
 
     @Override
     public void runOpMode() {
@@ -68,7 +70,7 @@ public class autotest extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        indexer = hardwareMap.get(CRServo.class, "indexer");
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -83,8 +85,8 @@ public class autotest extends LinearOpMode {
         // Step 1:  Drive forward for 3 seconds
 
         runtime.reset();
-
-        shooter.setPower(0.6);
+        indexer.setDirection(DcMotorSimple.Direction.FORWARD);
+        indexer.setPower(1);
         sleep(10000000);
 
     }
