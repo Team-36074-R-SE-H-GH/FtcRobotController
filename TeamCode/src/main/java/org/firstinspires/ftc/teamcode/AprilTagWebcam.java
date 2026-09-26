@@ -70,7 +70,7 @@ public class AprilTagWebcam {
     public double apriltagangle(AprilTagDetection detectedID){
         if (detectedID == null) {return 0;}
 
-        return detectedID.ftcPose.yaw;
+        return detectedID.ftcPose.bearing;
     }
     public AprilTagDetection getTagBySpecificID(int id){
         for (AprilTagDetection detection : detectedTags){
