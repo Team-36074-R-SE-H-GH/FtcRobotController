@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -64,6 +66,11 @@ public class AprilTagWebcam {
             telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedID.id));
             telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedID.center.x, detectedID.center.y));
         }
+    }
+    public double apriltagangle(AprilTagDetection detectedID){
+        if (detectedID == null) {return 0;}
+
+        return detectedID.ftcPose.yaw;
     }
     public AprilTagDetection getTagBySpecificID(int id){
         for (AprilTagDetection detection : detectedTags){

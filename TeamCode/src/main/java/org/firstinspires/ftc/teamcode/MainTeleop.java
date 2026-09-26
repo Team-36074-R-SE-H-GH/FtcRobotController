@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -149,9 +151,9 @@ public class MainTeleop extends LinearOpMode {
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-            max = Math.max(max, Math.abs(backLeftPower));
-            max = Math.max(max, Math.abs(backRightPower));
+            max = Math.max(abs(frontLeftPower), abs(frontRightPower));
+            max = Math.max(max, abs(backLeftPower));
+            max = Math.max(max, abs(backRightPower));
 
             if (max > 1.0) {
                 frontLeftPower  /= max;
@@ -191,6 +193,28 @@ public class MainTeleop extends LinearOpMode {
             }
             else{
                 shooter.setPower(-0);
+            }
+
+            if(gamepad1.left_trigger_pressed){
+                if(aprilTagWebcam.apriltagangle(id583) < -10){
+                    frontLeftPower = (0.3);
+                    backLeftPower = (0.3);
+                    frontRightPower = (-0.3);
+                    backRightPower = (-0.3);
+                }
+                else if(aprilTagWebcam.apriltagangle(id583) > 10 ){
+                    frontLeftPower = (-0.3);
+                    backLeftPower = (-0.3);
+                    frontRightPower = (0.3);
+                    backRightPower = (0.3);
+                }
+                else {
+                    frontLeftPower = (0);
+                    backLeftPower = (0);
+                    frontRightPower = (0);
+                    backRightPower = (0);
+                }
+
             }
 
 
