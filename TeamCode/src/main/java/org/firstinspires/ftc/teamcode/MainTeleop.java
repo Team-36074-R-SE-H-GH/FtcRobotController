@@ -196,13 +196,13 @@ public class MainTeleop extends LinearOpMode {
             }
 
             if(gamepad1.left_trigger_pressed){
-                if(aprilTagWebcam.apriltagangle(id583) < -10){
+                if(aprilTagWebcam.apriltagangle(id583) < -5){
                     frontLeftPower = (0.3);
                     backLeftPower = (0.3);
                     frontRightPower = (-0.3);
                     backRightPower = (-0.3);
                 }
-                else if(aprilTagWebcam.apriltagangle(id583) > 10 ){
+                else if(aprilTagWebcam.apriltagangle(id583) > 5 ){
                     frontLeftPower = (-0.3);
                     backLeftPower = (-0.3);
                     frontRightPower = (0.3);
