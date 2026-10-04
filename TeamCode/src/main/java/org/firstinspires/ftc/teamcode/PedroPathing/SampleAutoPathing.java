@@ -4,10 +4,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.pedropathing.util.Timer;
 
-
+@Autonomous(name="SampleAutoPathing", group="Robot")
 public class SampleAutoPathing extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
@@ -23,8 +24,8 @@ public class SampleAutoPathing extends OpMode {
     PathState pathstate;
 
 
-    private final Pose startpose = new Pose(56, 8, Math.toRadians(90));
-    private final Pose testpose = new Pose(56, 36, Math.toRadians(90));
+    private final Pose startpose = new Pose(0, 0, Math.toRadians(90));
+    private final Pose testpose = new Pose(0, 36, Math.toRadians(90));
 
     private PathChain driveStartShoot;
 
@@ -68,6 +69,7 @@ public class SampleAutoPathing extends OpMode {
         opModeTimer.resetTimer();
         follower = Constants.createFollower(hardwareMap);
         //TODO add in any other setups stuff
+        follower.setStartingPose(startpose);
 
         buildPaths();
     }
