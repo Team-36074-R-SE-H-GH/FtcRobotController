@@ -133,8 +133,8 @@ public class MainTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             aprilTagWebcam.update();
-            AprilTagDetection id583 = aprilTagWebcam.getTagBySpecificID(583);
-            aprilTagWebcam.displayDetectionTelemetry(id583);
+            AprilTagDetection id30 = aprilTagWebcam.getTagBySpecificID(30);
+            aprilTagWebcam.displayDetectionTelemetry(id30);
 
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -196,13 +196,13 @@ public class MainTeleop extends LinearOpMode {
             }
 
             if(gamepad1.left_trigger_pressed){
-                if(aprilTagWebcam.apriltagangle(id583) < -5){
+                if(aprilTagWebcam.apriltagangle(id30) < -5){
                     frontLeftPower = (0.3);
                     backLeftPower = (0.3);
                     frontRightPower = (-0.3);
                     backRightPower = (-0.3);
                 }
-                else if(aprilTagWebcam.apriltagangle(id583) > 5 ){
+                else if(aprilTagWebcam.apriltagangle(id30) > 5 ){
                     frontLeftPower = (-0.3);
                     backLeftPower = (-0.3);
                     frontRightPower = (0.3);

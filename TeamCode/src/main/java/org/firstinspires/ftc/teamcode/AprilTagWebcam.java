@@ -72,6 +72,13 @@ public class AprilTagWebcam {
 
         return detectedID.ftcPose.bearing;
     }
+    public static double apriltagheight(AprilTagDetection detectedID){
+        if (detectedID == null) {return 0;}
+
+        return detectedID.ftcPose.elevation;
+    }
+
+
     public AprilTagDetection getTagBySpecificID(int id){
         for (AprilTagDetection detection : detectedTags){
             if (detection.id == id){

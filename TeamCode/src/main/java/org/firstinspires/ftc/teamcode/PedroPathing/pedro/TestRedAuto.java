@@ -25,16 +25,13 @@ public class TestRedAuto extends LinearOpMode {
     private CRServo indexer;
     private DcMotor intake = null;
     private final PoseFactory poseFactory = PoseFactory.degrees();
-
-
-
-    private final Pose start = poseFactory.of(56.455, 9.8199, 90);
-    private final Pose path1 = poseFactory.of(56.91, 25.3079, 90);
-    private final Pose point2 = poseFactory.of(10.1077, 10.5772, 180);
-    private final Pose point2Control1 = poseFactory.of(51.4783, 6.9614, 0);
-    private final Pose point3 = poseFactory.of(57.5305, 119.4084, 90);
-    private final Pose point3Control1 = poseFactory.of(71.8875, 13.2287, 0);
-    private final Pose point3Control2 = poseFactory.of(62.7444, 59.6825, 0);
+        private final Pose start = poseFactory.of(56.455, 9.8199, 90);
+        private final Pose path1 = poseFactory.of(56.91, 25.3079, 90);
+        private final Pose point2 = poseFactory.of(10.1077, 10.5772, 180);
+        private final Pose point2Control1 = poseFactory.of(51.4783, 6.9614, 0);
+        private final Pose point3 = poseFactory.of(48.6634, 109.7414, 90);
+        private final Pose point3Control1 = poseFactory.of(6.8411, 88.4688, 0);
+        private final Pose point3Control2 = poseFactory.of(5.4648, 121.3308, 0);
     public Command runIndexerForward(CRServo indexer) {
         ElapsedTime timer = new ElapsedTime();
 
