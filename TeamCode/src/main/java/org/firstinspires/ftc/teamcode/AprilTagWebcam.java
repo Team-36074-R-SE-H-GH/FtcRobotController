@@ -1,8 +1,7 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
-
-import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -12,18 +11,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseRaw;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AprilTagWebcam {
+
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     private List<AprilTagDetection> detectedTags = new ArrayList<>();
     private Telemetry telemetry;
-    public void init(HardwareMap hwMap, Telemetry telemetry){
+
+    public void init(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -33,65 +34,113 @@ public class AprilTagWebcam {
                 .setDrawCubeProjection(true)
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
-        builder.setCameraResolution(new Size(640,480));
+        builder.setCameraResolution(new Size(640, 480));
         builder.addProcessor(aprilTagProcessor);
 
         visionPortal = builder.build();
-
-
-
-
-
-
     }
+
     public void update() {
         detectedTags = aprilTagProcessor.getDetections();
-
     }
+
     public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
-    public void displayDetectionTelemetry(AprilTagDetection detectedID){
-        if (detectedID == null) {return;}
+    public void displayDetectionTelemetry(AprilTagDetection detectedID) {
+        if (detectedID == null) {
+            return;
+        }
 
-        if (detectedID.metadata != null) {
-            telemetry.addLine(String.format("\n==== (ID %d) %s", detectedID.id, detectedID.metadata.name));
-            telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectedID.ftcPose.x, detectedID.ftcPose.y, detectedID.ftcPose.z));
-            telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectedID.ftcPose.pitch, detectedID.ftcPose.roll, detectedID.ftcPose.yaw));
-            telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectedID.ftcPose.range, detectedID.ftcPose.bearing, detectedID.ftcPose.elevation));
+        if (detectedID instanceof AprilTagSingleDetection) {
+            AprilTagSingleDetection single =
+                    (AprilTagSingleDetection) detectedID;
+
+            if (single.metadata != null) {
+                telemetry.addLine(String.format(
+                        "\n==== (ID %d) %s",
+                        single.id, single.metadata.name));
+
+                telemetry.addLine(String.format(
+                        "XYZ %6.1f %6.1f %6.1f (cm)",
+                        detectedID.ftcPose.x,
+                        detectedID.ftcPose.y,
+                        detectedID.ftcPose.z));
+
+                telemetry.addLine(String.format(
+                        "PRY %6.1f %6.1f %6.1f (deg)",
+                        detectedID.ftcPose.pitch,
+                        detectedID.ftcPose.roll,
+                        detectedID.ftcPose.yaw));
+
+                telemetry.addLine(String.format(
+                        "RBE %6.1f %6.1f %6.1f (cm, deg, deg)",
+                        detectedID.ftcPose.range,
+                        detectedID.ftcPose.bearing,
+                        detectedID.ftcPose.elevation));
+            } else {
+                telemetry.addLine(String.format(
+                        "\n==== (ID %d) Unknown", single.id));
+
+                telemetry.addLine(String.format(
+                        "Center %6.0f %6.0f (pixels)",
+                        single.center.x, single.center.y));
+            }
         } else {
-            telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedID.id));
-            telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedID.center.x, detectedID.center.y));
+            telemetry.addLine("AprilTag cluster detected");
+
+            telemetry.addLine(String.format(
+                    "XYZ %6.1f %6.1f %6.1f (cm)",
+                    detectedID.ftcPose.x,
+                    detectedID.ftcPose.y,
+                    detectedID.ftcPose.z));
+
+            telemetry.addLine(String.format(
+                    "RBE %6.1f %6.1f %6.1f (cm, deg, deg)",
+                    detectedID.ftcPose.range,
+                    detectedID.ftcPose.bearing,
+                    detectedID.ftcPose.elevation));
         }
     }
-    public double apriltagangle(AprilTagDetection detectedID){
-        if (detectedID == null) {return 0;}
+
+    public double apriltagangle(AprilTagDetection detectedID) {
+        if (detectedID == null || detectedID.ftcPose == null) {
+            return 0;
+        }
 
         return detectedID.ftcPose.bearing;
     }
-    public static double apriltagheight(AprilTagDetection detectedID){
-        if (detectedID == null) {return 0;}
+
+    public static double apriltagheight(AprilTagDetection detectedID) {
+        if (detectedID == null || detectedID.ftcPose == null) {
+            return 0;
+        }
 
         return detectedID.ftcPose.elevation;
     }
 
+    public AprilTagDetection getTagBySpecificID(int id) {
+        for (AprilTagDetection detection : detectedTags) {
+            if (detection instanceof AprilTagSingleDetection) {
+                AprilTagSingleDetection single =
+                        (AprilTagSingleDetection) detection;
 
-    public AprilTagDetection getTagBySpecificID(int id){
-        for (AprilTagDetection detection : detectedTags){
-            if (detection.id == id){
-                return detection;
+                if (single.id == id) {
+                    return single;
+                }
             }
         }
+
         return null;
     }
-    public void stop(){
-        if (visionPortal != null){
+
+    public void stop() {
+        if (visionPortal != null) {
             visionPortal.close();
         }
-
     }
-
 }
