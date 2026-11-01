@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,12 +12,15 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AprilTagWebcam {
 
@@ -32,7 +37,7 @@ public class AprilTagWebcam {
                 .setDrawTagOutline(true)
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -122,6 +127,51 @@ public class AprilTagWebcam {
 
         return detectedID.ftcPose.elevation;
     }
+    public boolean is_red_scoring_down(){
+        for(AprilTagDetection detection : detectedTags){
+            if(detection instanceof AprilTagClusterDetection){
+                AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+                if(Objects.equals(cluster.metadata.name, "RED SCORING")&&abs(cluster.ftcPose.roll) <= 90){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean is_red_audience_down(){
+        for(AprilTagDetection detection : detectedTags){
+            if(detection instanceof AprilTagClusterDetection){
+                AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+                if(Objects.equals(cluster.metadata.name, "RED AUDIENCE")&&abs(cluster.ftcPose.roll) <= 90){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean is_blue_scoring_down(){
+        for(AprilTagDetection detection : detectedTags){
+            if(detection instanceof AprilTagClusterDetection){
+                AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+                if(Objects.equals(cluster.metadata.name, "BLUE SCORING")&&abs(cluster.ftcPose.roll) <= 90){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean is_blue_audience_down(){
+        for(AprilTagDetection detection : detectedTags){
+            if(detection instanceof AprilTagClusterDetection){
+                AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+                if(Objects.equals(cluster.metadata.name, "BLUE AUDIENCE")&&abs(cluster.ftcPose.roll) <= 90){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public AprilTagDetection getTagBySpecificID(int id) {
         for (AprilTagDetection detection : detectedTags) {

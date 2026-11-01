@@ -28,7 +28,16 @@ public class OthersideRedautotest extends LinearOpMode {
     private CRServo indexer;
     private DcMotor intake = null;
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
-    AprilTagDetection id30 = aprilTagWebcam.getTagBySpecificID(30);
+
+
+    private final PoseFactory poseFactory = PoseFactory.degrees();
+
+    private final Pose start = poseFactory.of(59.4201, 132.2342, 270);
+    private final Pose path1Start = poseFactory.of(59.4201, 132.2342, 270);
+    private final Pose path1 = poseFactory.of(14.1255, 104.2693, 180);
+    private final Pose path1Control1 = poseFactory.of(63.7055, 89.5701, 0);
+    private final Pose path1Control2 = poseFactory.of(23.453, 112.5933, 0);
+
 
     public Command runIndexerForward(CRServo indexer) {
         ElapsedTime timer = new ElapsedTime();
@@ -63,18 +72,23 @@ public class OthersideRedautotest extends LinearOpMode {
                 runIndexerBackward(indexer)
         );
     }
-    public Command wait_until_tipped(AprilTagDetection tagID, double heightReq){
-        return Command.build()
-            .setExecute(() -> aprilTagWebcam.update())
-            .setDone(() -> AprilTagWebcam.apriltagheight(tagID) > heightReq);
-    }
+    public Command wait_until_tipped() {
+        boolean[] isdown = {false};
 
+        return Command.build()
+                .setExecute(() -> {
+                    aprilTagWebcam.update();
+                    isdown[0] = aprilTagWebcam.is_red_scoring_down();
+                })
+                .setDone(() -> isdown[0]);
+    }
     public Command autoRoutine() {
         return sequential(
-                wait_until_tipped(id30, 30),
+                wait_until_tipped(),
                 ShootBall(),
                 ShootBall(),
-                ShootBall()
+                ShootBall(),
+                follow(follower, path1())
         );
     }
 
@@ -85,14 +99,11 @@ public class OthersideRedautotest extends LinearOpMode {
         shooter = hardwareMap.get(DcMotor.class, "shooter");
         indexer = hardwareMap.get(CRServo.class, "indexer");
         intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter.setPower(1);
-        intake.setPower(0.7);
+
         follower = Constants.create(hardwareMap);
-        //follower.setPose(start);
+        follower.setPose(start);
         follower.update();
         aprilTagWebcam.update();
-
-        aprilTagWebcam.displayDetectionTelemetry(id30);
 
         waitForStart();
         schedule(autoRoutine());
@@ -100,6 +111,8 @@ public class OthersideRedautotest extends LinearOpMode {
         while (opModeIsActive()) {
             follower.update();
             Scheduler.execute();
+            shooter.setPower(1);
+            intake.setPower(0.7);
 
             telemetry.addData("x", follower.pose().x());
             telemetry.addData("y", follower.pose().y());
@@ -112,6 +125,10 @@ public class OthersideRedautotest extends LinearOpMode {
 
             telemetry.update();
         }
+    }
+
+    public Path path1() {
+        return Paths.curve(start, path1Control1, path1Control2, path1).linear(start, path1);
     }
 
 

@@ -189,10 +189,10 @@ public class MainTeleop extends LinearOpMode {
                 indexer.setPower(-0.5);
             }
             if(gamepad1.b){
-                shooter.setPower(0.7);
+                shooter.setPower(1);
             }
             else{
-                shooter.setPower(-0);
+                shooter.setPower(0);
             }
 
             if(gamepad1.left_trigger_pressed){
