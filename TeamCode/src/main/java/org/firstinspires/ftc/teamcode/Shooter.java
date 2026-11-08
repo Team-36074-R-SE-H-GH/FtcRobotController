@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -68,7 +69,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
+@Configurable
 @TeleOp(name="Shooter", group="Linear OpMode")
 public class Shooter extends LinearOpMode {
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
@@ -84,7 +85,7 @@ public class Shooter extends LinearOpMode {
     private CRServo indexer;
 
     // 480cm/s (calculated shooter speed) divided by 30 (circumference of wheel) multiplied by ticks per second (1425.1)
-    private double shooterSpeedCmPerSec = 22801.6;
+    public static double shooterSpeedCmPerSec = 22801.6;
 
 
     @Override
@@ -118,6 +119,7 @@ public class Shooter extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotor.Direction.FORWARD);
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
