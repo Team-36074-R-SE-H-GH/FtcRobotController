@@ -1,5 +1,4 @@
-/* Copyright (c) 2021 FIRST. All rights reserved.
- *
+ /*
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
  * the following conditions are met:
@@ -29,6 +28,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static com.sun.tools.doclint.Entity.pi;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 /*
@@ -67,9 +68,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MainTeleop", group="Linear OpMode")
-public class MainTeleop extends LinearOpMode {
-     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
+@TeleOp(name="AutoAlignAndMove", group="Linear OpMode")
+public class AutoAlignAndMove extends LinearOpMode {
+    AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
@@ -79,12 +80,16 @@ public class MainTeleop extends LinearOpMode {
     private DcMotor shooter = null;
     private DcMotor intake = null;
     private CRServo indexer;
+    private final double shooting_distance = 50;
+
+    private final double pi = Math.PI;
 
 
     @Override
     public void runOpMode() {
         double max;
         aprilTagWebcam.init(hardwareMap, telemetry);
+
 
 
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -138,16 +143,16 @@ public class MainTeleop extends LinearOpMode {
 
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double frontLeftPower  = axial + lateral + yaw;
+            double frontLeftPower = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
-            double backLeftPower   = axial - lateral + yaw;
-            double backRightPower  = axial + lateral - yaw;
+            double backLeftPower = axial - lateral + yaw;
+            double backRightPower = axial + lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -156,73 +161,79 @@ public class MainTeleop extends LinearOpMode {
             max = Math.max(max, abs(backRightPower));
 
             if (max > 1.0) {
-                frontLeftPower  /= max;
+                frontLeftPower /= max;
                 frontRightPower /= max;
-                backLeftPower   /= max;
-                backRightPower  /= max;
+                backLeftPower /= max;
+                backRightPower /= max;
             }
-            if(gamepad1.right_trigger_pressed&&intake_toggled==0){
+            if (gamepad1.right_trigger_pressed && intake_toggled == 0) {
                 intake_toggled = 1;
-                if(intake_state == 0){
+                if (intake_state == 0) {
                     intake.setPower(0.7);
 
                     intake_state = 1;
-                }else{
+                } else {
                     intake.setPower(0);
 
                     intake_state = 0;
                 }
 
-            }else if(!gamepad1.right_trigger_pressed){
+            } else if (!gamepad1.right_trigger_pressed) {
                 intake_toggled = 0;
             }
-            if (gamepad1.left_stick_button){
-               drive_speed_max = 0.25;
+            if (gamepad1.left_stick_button) {
+                drive_speed_max = 0.25;
             } else {
                 drive_speed_max = 1;
             }
 
-            if(gamepad1.a){
+            if (gamepad1.a) {
                 indexer.setPower(0.4);
-            }
-            else{
+            } else {
                 indexer.setPower(-0.5);
             }
-            if(gamepad1.b){
+            if (gamepad1.b) {
                 shooter.setPower(1);
-            }
-            else{
+            } else {
                 shooter.setPower(0);
             }
+            /*
+            Testing for
+            if(gamepad1.yWasPressed()){
 
-            if(gamepad1.left_trigger_pressed){
-                if(aprilTagWebcam.apriltagangle(id30) < -5){
-                    frontLeftPower = (0.3);
-                    backLeftPower = (0.3);
-                    frontRightPower = (-0.3);
-                    backRightPower = (-0.3);
-                }
-                else if(aprilTagWebcam.apriltagangle(id30) > 5 ){
-                    frontLeftPower = (-0.3);
-                    backLeftPower = (-0.3);
-                    frontRightPower = (0.3);
-                    backRightPower = (0.3);
-                }
-                else {
-                    frontLeftPower = (0);
-                    backLeftPower = (0);
-                    frontRightPower = (0);
-                    backRightPower = (0);
-                }
+                move_at_angle(pi/4, 0.3);
+                sleep(2000);
+                move_at_angle(3*pi/4,0.3);
+                sleep(2000);
+                move_at_angle(5*pi/4, 0.3);
+                sleep(2000);
+                move_at_angle(7*pi/4,0.3);
+                sleep(2000);
 
+                stop_moving();
+
+            }*/
+            if(gamepad1.yWasPressed()){
+                if(aprilTagWebcam.angle_to_raised_hive_blue() == -1){
+                    break;
+                }
+                double angletomove = pi/ 2 + aprilTagWebcam.angle_to_raised_hive_red();
+                if(aprilTagWebcam.distance_to_raised_hive_red()-shooting_distance<-2) {
+
+                    move_at_angle(angletomove+pi, 0.3);
+                } else if (aprilTagWebcam.distance_to_raised_hive_red()-shooting_distance>2) {
+                    move_at_angle(angletomove, 0.3);
+                }
             }
+
+
 
 
             // Send calculated power to wheels
-            frontLeftDrive.setPower(frontLeftPower*drive_speed_max);
-            frontRightDrive.setPower(frontRightPower*drive_speed_max);
-            backLeftDrive.setPower(backLeftPower*drive_speed_max);
-            backRightDrive.setPower(backRightPower*drive_speed_max);
+            frontLeftDrive.setPower(frontLeftPower * drive_speed_max);
+            frontRightDrive.setPower(frontRightPower * drive_speed_max);
+            backLeftDrive.setPower(backLeftPower * drive_speed_max);
+            backRightDrive.setPower(backRightPower * drive_speed_max);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -231,4 +242,23 @@ public class MainTeleop extends LinearOpMode {
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
             telemetry.update();
         }
-    }}
+    }
+    public void move_at_angle(double theta, double power){
+        double sin = Math.sin(theta - pi/4);
+        double cos = Math.cos(theta - pi/4);
+        frontLeftDrive.setPower(power*cos);
+        backLeftDrive.setPower(power*sin);
+        frontRightDrive.setPower(power*sin);
+        backRightDrive.setPower(power*cos);
+
+    }
+    public void stop_moving(){
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+
+
+    }
+}
+
