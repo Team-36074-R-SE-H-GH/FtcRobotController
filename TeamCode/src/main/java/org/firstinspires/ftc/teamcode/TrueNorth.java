@@ -85,8 +85,8 @@ public class TrueNorth extends LinearOpMode {
     private CRServo indexer;
 
     private IMU imu;
-    private DcMotor frontLeft, frontRight;
-    private DcMotor backLeft, backRight;
+    //private DcMotor frontLeft, frontRight;
+    //private DcMotor backLeft, backRight;
 
 
 
@@ -187,10 +187,10 @@ public class TrueNorth extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
             // Set motor powers
-            frontLeft.setPower(frontLeftPower);
-            backLeft.setPower(backLeftPower);
-            frontRight.setPower(frontRightPower);
-            backRight.setPower(backRightPower);
+            frontLeftDrive.setPower(frontLeftPower);
+            backLeftDrive.setPower(backLeftPower);
+            frontRightDrive.setPower(frontRightPower);
+            backRightDrive.setPower(backRightPower);
             //Telemetry
             telemetry.addData("Heading (Degrees)",
                     Math.toDegrees(heading));
