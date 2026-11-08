@@ -134,10 +134,7 @@ public class TrueNorth extends LinearOpMode {
                         RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 )
         ));
-        imu.resetYaw();
-
-        telemetry.addLine("True North Initialized");
-        telemetry.update();
+        reset_yaw();
 
 
         // Wait for the game to start (driver presses START)
@@ -243,6 +240,9 @@ public class TrueNorth extends LinearOpMode {
             else{
                 shooter.setPower(0);
             }
+            if(gamepad1.dpadUpWasPressed()){
+                reset_yaw();
+            }
 
             if(gamepad1.left_trigger_pressed){
                 if(aprilTagWebcam.apriltagangle(id30) < -5){
@@ -280,4 +280,11 @@ public class TrueNorth extends LinearOpMode {
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
             telemetry.update();
         }
-    }}
+    }
+    void reset_yaw(){
+        imu.resetYaw();
+
+        telemetry.addLine("True North Initialized");
+        telemetry.update();
+    }
+}
