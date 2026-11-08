@@ -35,7 +35,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -67,8 +71,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MainTeleop", group="Linear OpMode")
-public class MainTeleop extends LinearOpMode {
+@TeleOp(name="TrueNorth", group="Linear OpMode")
+public class TrueNorth extends LinearOpMode {
      AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -79,6 +83,11 @@ public class MainTeleop extends LinearOpMode {
     private DcMotor shooter = null;
     private DcMotor intake = null;
     private CRServo indexer;
+
+    private IMU imu;
+    //private DcMotor frontLeft, frontRight;
+    //private DcMotor backLeft, backRight;
+
 
 
     @Override
@@ -118,6 +127,15 @@ public class MainTeleop extends LinearOpMode {
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        ));
+        reset_yaw();
+
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -130,6 +148,8 @@ public class MainTeleop extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        boolean lastStart = false;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             aprilTagWebcam.update();
@@ -141,13 +161,39 @@ public class MainTeleop extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double frontLeftPower  = axial + lateral + yaw;
-            double frontRightPower = axial - lateral - yaw;
-            double backLeftPower   = axial - lateral + yaw;
-            double backRightPower  = axial + lateral - yaw;
+            double rx = gamepad1.right_stick_x;
+            if (gamepad1.start && !lastStart) {
+                imu.resetYaw();
+            }
+            lastStart = gamepad1.start;
+            // Get heading in radians
+            double heading = imu.getRobotYawPitchRollAngles()
+                    .getYaw(AngleUnit.RADIANS);
+            double rotX = lateral * Math.cos(-heading)
+                    - axial * Math.sin(-heading);
+            double rotY = lateral * Math.sin(-heading)
+                    + axial * Math.cos(-heading);
+            rotX *= 1.1;
+            // Normalize motor powers
+            double denominator = Math.max(
+                    Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx),
+                    1.0
+            );
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
+            // Set motor powers
+            frontLeftDrive.setPower(frontLeftPower);
+            backLeftDrive.setPower(backLeftPower);
+            frontRightDrive.setPower(frontRightPower);
+            backRightDrive.setPower(backRightPower);
+            //Telemetry
+            telemetry.addData("Heading (Degrees)",
+                    Math.toDegrees(heading));
+            telemetry.addData("Forward", rotY);
+            telemetry.addData("Strafe", rotX);
+            telemetry.update();
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -194,6 +240,9 @@ public class MainTeleop extends LinearOpMode {
             else{
                 shooter.setPower(0);
             }
+            if(gamepad1.dpadUpWasPressed()){
+                reset_yaw();
+            }
 
             if(gamepad1.left_trigger_pressed){
                 if(aprilTagWebcam.apriltagangle(id30) < -5){
@@ -231,4 +280,11 @@ public class MainTeleop extends LinearOpMode {
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
             telemetry.update();
         }
-    }}
+    }
+    void reset_yaw(){
+        imu.resetYaw();
+
+        telemetry.addLine("True North Initialized");
+        telemetry.update();
+    }
+}
