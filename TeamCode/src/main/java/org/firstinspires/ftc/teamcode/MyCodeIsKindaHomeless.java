@@ -34,8 +34,10 @@ import static java.lang.Math.abs;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -80,7 +82,7 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotor shooter = null;
     private DcMotor intake = null;
-    private DcMotor indexer;
+    private CRServo indexer;
 
     private IMU imu;
     //private DcMotor frontLeft, frontRight;
@@ -102,7 +104,7 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
         intake = hardwareMap.get(DcMotor.class, "intake_motor");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        indexer = hardwareMap.get(CRServo.class, "indexer");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -153,7 +155,6 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            indexer.setPower(1);
             aprilTagWebcam.update();
             AprilTagDetection id30 = aprilTagWebcam.getTagBySpecificID(30);
             aprilTagWebcam.displayDetectionTelemetry(id30);
@@ -242,18 +243,19 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
                 shooter.setPower(0);
             }
 
-            if (gamepad1.right_trigger_pressed) {
-                if (aprilTagWebcam.distance_to_raised_hive_red() < 97) {
+            if (gamepad1.y) {
+                if (aprilTagWebcam.distance_to_raised_hive_red() < 25) {
                     frontLeftPower = (-0.3);
                     backLeftPower = (-0.3);
                     frontRightPower = (-0.3);
                     backRightPower = (-0.3);
 
-                } else if (aprilTagWebcam.distance_to_raised_hive_red() < 107) {
+                } else if (aprilTagWebcam.distance_to_raised_hive_red() > 42.126) {
                     frontLeftPower = (0.3);
                     backLeftPower = (0.3);
                     frontRightPower = (0.3);
                     backRightPower = (0.3);
+
                 } else {
                     frontLeftPower = (0);
                     backLeftPower = (0);
