@@ -85,7 +85,7 @@ public class Shooter extends LinearOpMode {
     private CRServo indexer;
 
     // 480cm/s (calculated shooter speed) divided by 30 (circumference of wheel) multiplied by ticks per second (1425.1)
-    public static double shooterSpeedCmPerSec = 480;
+    public static double shooterSpeedCmPerSec = 0;
 
     public static double shooterTicksPerSecond = 1425.1;
 
