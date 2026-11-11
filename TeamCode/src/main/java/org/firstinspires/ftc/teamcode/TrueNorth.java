@@ -183,11 +183,11 @@ public class TrueNorth extends LinearOpMode {
             double backLeftPower = (rotY - rotX + rx) / denominator;
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
-            // Set motor powers
-            frontLeftDrive.setPower(frontLeftPower);
+            // Set motor powers, is done later with max speed mult
+            /*frontLeftDrive.setPower(frontLeftPower);
             backLeftDrive.setPower(backLeftPower);
             frontRightDrive.setPower(frontRightPower);
-            backRightDrive.setPower(backRightPower);
+            backRightDrive.setPower(backRightPower); */
             //Telemetry
             telemetry.addData("Heading (Degrees)",
                     Math.toDegrees(heading));
