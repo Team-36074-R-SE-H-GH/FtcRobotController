@@ -236,13 +236,14 @@ public class TrueNorth extends LinearOpMode {
                 indexer.setPower(-0.5);
             }*/
             if(gamepad1.b){
-                pollen_shooter.setPower(0.513367350384756385739689023897934876938475938754609234968749568729348679234786);
+                pollen_shooter.setPower(0.513367350384756385);
             }
             else{
                 pollen_shooter.setPower(0);
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
+                imu.resetYaw();
             }
 
             if(gamepad1.left_trigger_pressed){
