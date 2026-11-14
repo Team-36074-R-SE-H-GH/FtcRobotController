@@ -20,7 +20,7 @@
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * DAMAGES (INCLUDING, BUT NOT LIMITEDsdwdw
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -80,7 +81,7 @@ public class TrueNorth extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor shooter = null;
+    private DcMotor pollen_shooter = null;
     private DcMotor intake = null;
     private CRServo indexer;
 
@@ -102,9 +103,9 @@ public class TrueNorth extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        pollen_shooter = hardwareMap.get(DcMotor.class, "pollen_shooter");
+        //indexer = hardwareMap.get(CRServo.class, "indexer");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -116,11 +117,11 @@ public class TrueNorth extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        pollen_shooter.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -184,10 +185,10 @@ public class TrueNorth extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
             // Set motor powers
-            frontLeftDrive.setPower(frontLeftPower);
+            /*frontLeftDrive.setPower(frontLeftPower);
             backLeftDrive.setPower(backLeftPower);
             frontRightDrive.setPower(frontRightPower);
-            backRightDrive.setPower(backRightPower);
+            backRightDrive.setPower(backRightPower);*/
             //Telemetry
             telemetry.addData("Heading (Degrees)",
                     Math.toDegrees(heading));
@@ -210,7 +211,7 @@ public class TrueNorth extends LinearOpMode {
             if(gamepad1.right_trigger_pressed&&intake_toggled==0){
                 intake_toggled = 1;
                 if(intake_state == 0){
-                    intake.setPower(0.7);
+                    intake.setPower(1);
 
                     intake_state = 1;
                 }else{
@@ -228,17 +229,17 @@ public class TrueNorth extends LinearOpMode {
                 drive_speed_max = 1;
             }
 
-            if(gamepad1.a){
+            /*if(gamepad1.a){
                 indexer.setPower(0.4);
             }
             else{
                 indexer.setPower(-0.5);
-            }
+            }*/
             if(gamepad1.b){
-                shooter.setPower(1);
+                pollen_shooter.setPower(0.513367350384756385739689023897934876938475938754609234968749568729348679234786);
             }
             else{
-                shooter.setPower(0);
+                pollen_shooter.setPower(0);
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();

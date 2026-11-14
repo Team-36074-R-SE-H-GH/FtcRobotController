@@ -80,7 +80,7 @@ public class AutoAlignAndMove extends LinearOpMode {
     private DcMotor shooter = null;
     private DcMotor intake = null;
     private CRServo indexer;
-    private final double shooting_distance = 50;
+    private final double shooting_distance = 30;
 
     private final double pi = Math.PI;
 
@@ -213,16 +213,18 @@ public class AutoAlignAndMove extends LinearOpMode {
                 stop_moving();
 
             }*/
-            if(gamepad1.yWasPressed()){
-                if(aprilTagWebcam.angle_to_raised_hive_blue() == -1){
-                    break;
-                }
-                double angletomove = pi/ 2 + aprilTagWebcam.angle_to_raised_hive_red();
-                if(aprilTagWebcam.distance_to_raised_hive_red()-shooting_distance<-2) {
+            if (gamepad1.y) {
+                if (aprilTagWebcam.angle_to_raised_hive_red() == -1) {
+                    telemetry.addData("AprilTag", "Not detected!");
+                } else {
 
-                    move_at_angle(angletomove+pi, 0.3);
-                } else if (aprilTagWebcam.distance_to_raised_hive_red()-shooting_distance>2) {
-                    move_at_angle(angletomove, 0.3);
+                    double angle_to_move = pi / 2 + aprilTagWebcam.angle_to_raised_hive_red();
+
+                    if (aprilTagWebcam.distance_to_raised_hive_red() - shooting_distance < -2) {
+                        move_at_angle(angle_to_move + pi, 0.6);
+                    } else if (aprilTagWebcam.distance_to_raised_hive_red() - shooting_distance > 2) {
+                        move_at_angle(angle_to_move, 0.6);
+                    }
                 }
             }
 
@@ -240,6 +242,7 @@ public class AutoAlignAndMove extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
+            telemetry.addData("AprilTag Distance", aprilTagWebcam.distance_to_raised_hive_red());
             telemetry.update();
         }
     }
