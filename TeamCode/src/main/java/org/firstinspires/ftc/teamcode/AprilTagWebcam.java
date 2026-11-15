@@ -157,6 +157,12 @@ public class AprilTagWebcam {
             if(detection instanceof AprilTagClusterDetection){
                 AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
                 if((cluster.metadata.name.charAt(0)== 'R')&&abs(cluster.ftcPose.roll) <= 90){
+                    telemetry.addData("X", cluster.ftcPose.x);
+                    telemetry.addData("Z", cluster.ftcPose.z);
+                    telemetry.addData("Distance", Pythagorean_theorem(
+                            cluster.ftcPose.x, cluster.ftcPose.z
+                    ));
+                    telemetry.addData("Range", cluster.ftcPose.range);
                     return Pythagorean_theorem(cluster.ftcPose.x, cluster.ftcPose.z);
                 }
             }

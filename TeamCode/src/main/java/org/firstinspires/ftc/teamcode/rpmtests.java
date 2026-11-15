@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@TeleOp(name = "rpmtsets", group = "Linear OpMode")
+@TeleOp(name = "rpmtests", group = "Linear OpMode")
 public class rpmtests extends LinearOpMode {
     private DcMotor motor = null;
-    private double power = 0.5;
+    private double power = 1;
 
 
     @Override
