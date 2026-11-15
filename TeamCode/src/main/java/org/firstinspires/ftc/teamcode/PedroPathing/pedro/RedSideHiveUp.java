@@ -40,10 +40,12 @@ public class RedSideHiveUp extends LinearOpMode {
     private final Pose path1Segment1End = poseFactory.of(8.3462, 50.0977, 180);
     private final Pose path1Segment2Start = poseFactory.of(8.3462, 50.0977, 180);
     private final Pose path1Segment2End = poseFactory.of(8.3462, 50.0977, 180);
-    private final Pose point2 = poseFactory.of(57.2, 130.8641, 90);
+    private final Pose point2 = poseFactory.of(57.2, 130.8641, -270);
     private final Pose point2Control1 = poseFactory.of(45.7143, 49.7886, 0);
-    private final Pose point2Control2 = poseFactory.of(9.3611, 106.6203, 0);
-    private final Pose point2Segment2Heading = poseFactory.of(57.2, 130.8641, 90);
+    private final Pose point2Control2 = poseFactory.of(20.8304, 119.7622, 0);
+    private final Pose point2Control3 = poseFactory.of(57.1623, 116.4894, 0);
+    private final Pose point2Segment2Start = poseFactory.of(57.2, 130.8641, -109.5222);
+    private final Pose point2Segment2End = poseFactory.of(57.2, 130.8641, 90);
 
 
 
@@ -121,11 +123,16 @@ public class RedSideHiveUp extends LinearOpMode {
 
     public Command autoRoutine() {
         return sequential(
+                ShootBall(),
+                ShootBall(),
+                ShootBall(),
+                ShootBall(),
                 follow(follower, path1()),
+                follow(follower, path2()),
                 ShootBall(),
                 ShootBall(),
                 ShootBall(),
-                follow(follower, path2())
+                ShootBall()
         );
     }
 
@@ -168,5 +175,5 @@ public class RedSideHiveUp extends LinearOpMode {
     }
 
     public Path path2() {
-        return Paths.curve(path1, point2Control1, point2Control2, point2).heading(Interpolator.piecewise().until(0.3, Interpolator.tangent.reverse()).until(1, Interpolator.constant(point2Segment2Heading)));
+        return Paths.curve(path1, point2Control1, point2Control2, point2Control3, point2).heading(Interpolator.piecewise().until(0.3, Interpolator.tangent.reverse()).until(1, Interpolator.linear(point2Segment2Start, point2Segment2End)));
     }}
