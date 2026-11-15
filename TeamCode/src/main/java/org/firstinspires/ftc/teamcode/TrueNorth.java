@@ -131,11 +131,12 @@ public class TrueNorth extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
                         RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 )
         ));
         reset_yaw();
+        imu.resetYaw();
 
 
         // Wait for the game to start (driver presses START)
@@ -244,6 +245,7 @@ public class TrueNorth extends LinearOpMode {
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
                 imu.resetYaw();
+                telemetry.update();
             }
 
             if(gamepad1.left_trigger_pressed){
@@ -275,7 +277,7 @@ public class TrueNorth extends LinearOpMode {
             backLeftDrive.setPower(backLeftPower*drive_speed_max);
             backRightDrive.setPower(backRightPower*drive_speed_max);
 
-            // Show the elapsed game time and wheel power.
+            // Show the elapsed gam time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
