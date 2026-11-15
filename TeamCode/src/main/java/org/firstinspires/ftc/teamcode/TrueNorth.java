@@ -243,6 +243,7 @@ public class TrueNorth extends LinearOpMode {
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
+                telemetry.update();
             }
 
             if(gamepad1.left_trigger_pressed){
