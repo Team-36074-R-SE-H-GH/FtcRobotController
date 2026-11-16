@@ -132,10 +132,11 @@ public class TrueNorth extends LinearOpMode {
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
                 )
         ));
         reset_yaw();
+
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -157,67 +158,32 @@ public class TrueNorth extends LinearOpMode {
             aprilTagWebcam.displayDetectionTelemetry(id30);
 
 
-            // ==========================================
-// TRUE NORTH / FIELD-CENTRIC DRIVE
-// ==========================================
-
-// Reset field heading when START is pressed
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
+            double rx = gamepad1.right_stick_x;
             if (gamepad1.start && !lastStart) {
                 imu.resetYaw();
             }
             lastStart = gamepad1.start;
-
-// Read joystick inputs
-            // Joystick inputs
-            double axial = -gamepad1.left_stick_y;
-            double lateral = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
-
-// Read IMU heading
+            // Get heading in radians
             double heading = imu.getRobotYawPitchRollAngles()
                     .getYaw(AngleUnit.RADIANS);
-
-// Convert joystick direction to polar coordinates
-            double theta = Math.atan2(axial, lateral);
-            double magnitude = Math.hypot(lateral, axial);
-
-// Rotate joystick direction by negative robot heading
-            theta -= heading;
-
-// Convert back to robot-centric coordinates
-            double rotY = magnitude * Math.sin(theta);
-            double rotX = magnitude * Math.cos(theta);
-
-// Strafe correction
+            double rotX = lateral * Math.cos(-heading)
+                    - axial * Math.sin(-heading);
+            double rotY = lateral * Math.sin(-heading)
+                    + axial * Math.cos(-heading);
             rotX *= 1.1;
-
-// Normalize motor powers
+            // Normalize motor powers
             double denominator = Math.max(
                     Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx),
                     1.0
             );
-
-// Mecanum motor calculations
             double frontLeftPower = (rotY + rotX + rx) / denominator;
             double backLeftPower = (rotY - rotX + rx) / denominator;
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
-            telemetry.addData("FL / FR",
-                    "%.2f / %.2f", frontLeftPower, frontRightPower);
-
-            telemetry.addData("BL / BR",
-                    "%.2f / %.2f", backLeftPower, backRightPower);
-
-            telemetry.addData("Heading",
-                    Math.toDegrees(heading));
-
-// TrueNorth telemetry
-            telemetry.addData("Heading (Degrees)", Math.toDegrees(heading));
-            telemetry.addData("Field Forward", axial);
-            telemetry.addData("Field Strafe", lateral);
-            telemetry.addData("Robot Forward", rotY);
-            telemetry.addData("Robot Strafe", rotX);
-            telemetry.update();
             // Set motor powers
             /*frontLeftDrive.setPower(frontLeftPower);
             backLeftDrive.setPower(backLeftPower);
@@ -263,22 +229,12 @@ public class TrueNorth extends LinearOpMode {
                 drive_speed_max = 1;
             }
 
-            if(gamepad1.a){
-                frontLeftDrive.setPower(0.3);
-                sleep(1000);
-                frontLeftDrive.setPower(0);
-                backLeftDrive.setPower(0.3);
-                sleep(1000);
-                backLeftDrive.setPower(0);
-                frontRightDrive.setPower(0.3);
-                sleep(1000);
-                frontRightDrive.setPower(0);
-                backRightDrive.setPower(0.3);
-                sleep(1000);
-                backRightDrive.setPower(0);
-
+            /*if(gamepad1.a){
+                indexer.setPower(0.4);
             }
-
+            else{
+                indexer.setPower(-0.5);
+            }*/
             if(gamepad1.b){
                 pollen_shooter.setPower(0.513367350384756385);
             }
