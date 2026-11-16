@@ -80,14 +80,15 @@ public class Shooter extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     //private DcMotor shooter = null;
-    private DcMotorEx shooter = null;
+    private DcMotorEx pollen_shooter = null;
     private DcMotor intake = null;
     private CRServo indexer;
 
     // 480cm/s (calculated shooter speed) divided by 30 (circumference of wheel) multiplied by ticks per second (1425.1)
-    public static double shooterSpeedCmPerSec = 0;
+    public static double pollen_shooterSpeedCmPerSec =  1000;
 
-    public static double shooterTicksPerSecond = 1425.1;
+    public static double TICKS_PER_Second= 1000;//BILDA 312 RPM motor spec
+
 
 
     @Override
@@ -102,9 +103,9 @@ public class Shooter extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+        //indexer = hardwareMap.get(CRServo.class, "indexer");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -120,8 +121,10 @@ public class Shooter extends LinearOpMode {
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pollen_shooter.setDirection(DcMotor.Direction.FORWARD);
+        pollen_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pollen_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pollen_shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake.setDirection(DcMotor.Direction.FORWARD);
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -199,11 +202,12 @@ public class Shooter extends LinearOpMode {
                 indexer.setPower(-0.5);
             }
             if(gamepad1.b){
-                // shooter.setPower(1);
-                shooter.setVelocity((shooterSpeedCmPerSec / 30) * shooterTicksPerSecond);
+                // Converts cm/s -> rev/s -> ticks/s
+                double targetTicksPerSec = (480 /30.1592894745 ) * TICKS_PER_Second;
+                pollen_shooter.setVelocity(pollen_shooterSpeedCmPerSec);
             }
             else{
-                shooter.setVelocity(0);
+                pollen_shooter.setVelocity(0);
             }
 
             if(gamepad1.left_trigger_pressed){
