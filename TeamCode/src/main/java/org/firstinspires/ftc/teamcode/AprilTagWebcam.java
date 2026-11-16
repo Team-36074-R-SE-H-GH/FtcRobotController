@@ -163,7 +163,7 @@ public class AprilTagWebcam {
                             cluster.ftcPose.x, cluster.ftcPose.z
                     ));
                     telemetry.addData("Range", cluster.ftcPose.range);
-                    return Pythagorean_theorem(cluster.ftcPose.x, cluster.ftcPose.z);
+                    return cluster.ftcPose.range;
                 }
             }
         }
@@ -174,7 +174,7 @@ public class AprilTagWebcam {
             if(detection instanceof AprilTagClusterDetection){
                 AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
                 if((cluster.metadata.name.charAt(0)== 'B')&&abs(cluster.ftcPose.roll) <= 90){
-                    return Pythagorean_theorem(cluster.ftcPose.x, cluster.ftcPose.z);
+                    return cluster.ftcPose.range;
                 }
             }
         }
