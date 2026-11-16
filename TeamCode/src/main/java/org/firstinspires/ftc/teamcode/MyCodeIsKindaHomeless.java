@@ -136,6 +136,8 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
         ));
         imu.resetYaw();
 
+
+
         telemetry.addLine("True North Initialized");
         telemetry.update();
 
@@ -281,6 +283,10 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
                         backRightPower = (0);
                     }
 
+                    if (gamepad1.y) {
+                        telemetry.update();
+                    }
+
                 }
 
 
@@ -295,7 +301,19 @@ public class MyCodeIsKindaHomeless extends LinearOpMode {
                 telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
                 telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
                 telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
+
+                InterpolatingTreeMap shooterTable = new InterpolatingTreeMap();
+                shooterTable.put(15.0, 220.0);
+                shooterTable.put(42.0, 410.0);
+                shooterTable.put(30.0, 315.0);
+
+                telemetry.addData("InterpolatedValue", "%4.2f", shooterTable.get(35.0) );
+                telemetry.addData("InterpolatedValue", "%4.2f", shooterTable.get(10.0) );
+                telemetry.addData("InterpolatedValue", "%4.2f", shooterTable.get(50.0) );
+
                 telemetry.update();
+
+
             }
         }
     }

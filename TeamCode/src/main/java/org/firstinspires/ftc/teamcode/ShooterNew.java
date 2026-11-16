@@ -42,6 +42,30 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCompatibilityManager;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCompatibilityManager;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
+
+import java.util.List;
+
+
+import java.util.List;
 
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -87,10 +111,12 @@ public class ShooterNew extends LinearOpMode {
     private DcMotor intake = null;
     private CRServo indexer;
 
+    public static double shooterTargetTPS = 1300;
 
-    public static double TICKS_PER_Second= 125;
-    //480cm/s divided by circumference of shooter wheel multiplied by ideal ticks per second (1300-2500)
-    public static double pollen_shooterSpeedCmPerSec = ((480/30.159289474462014)* TICKS_PER_Second);
+/*
+    public static double a = 55;
+    //480cm/s divided by circumference of shooter wheel multiplied by ticks per rev
+    public static double b = ((480/30.159289474462014)* a); */
 
     private IMU imu;
     //private DcMotor frontLeft, frontRight;
@@ -105,7 +131,7 @@ public class ShooterNew extends LinearOpMode {
 
 
         // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
+        // to the names assigned during the robost configuration step on the DS or RC devices.
         frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
@@ -149,6 +175,8 @@ public class ShooterNew extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
+
+
 
         telemetry.update();
         int intake_state = 0;
@@ -246,7 +274,7 @@ public class ShooterNew extends LinearOpMode {
                 indexer.setPower(-0.5);
             }*/
             if(gamepad1.b){
-                pollen_shooter.setVelocity(pollen_shooterSpeedCmPerSec);
+                pollen_shooter.setVelocity(shooterTargetTPS);
             }
             else{
                 pollen_shooter.setVelocity(0);
@@ -289,10 +317,9 @@ public class ShooterNew extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
-            telemetry.addData("Shooter Pos", pollen_shooter.getCurrentPosition());
-            telemetry.addData("Target TPS", pollen_shooterSpeedCmPerSec);
+            telemetry.addData("Target TPS", shooterTargetTPS);
             telemetry.addData("Actual TPS", pollen_shooter.getVelocity());
-            telemetry.addData("Shooter Pos", pollen_shooter.getCurrentPosition());
+            telemetry.addData("Distance to Blue Hive", aprilTagWebcam.distance_to_raised_hive_blue());
             telemetry.update();
         }
     }
