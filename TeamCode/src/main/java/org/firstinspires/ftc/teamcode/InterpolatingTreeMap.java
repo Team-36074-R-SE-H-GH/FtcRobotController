@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -7,6 +9,7 @@ import java.util.TreeMap;
  * A TreeMap extension that can interpolate between the values of two keys
  * if the exact requested key does not exist.
  */
+@Disabled
 public class InterpolatingTreeMap extends TreeMap<Double, Double> {
     private static final long serialVersionUID = 1L;
 

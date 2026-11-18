@@ -15,7 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 @TeleOp(name = "rpmtests", group = "Linear OpMode")
 public class rpmtests extends LinearOpMode {
     private DcMotor motor = null;
-    private double power = 1;
+    private double power = 0.3;
 
 
     @Override
