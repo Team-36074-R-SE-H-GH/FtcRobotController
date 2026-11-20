@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import com.pedropathing.api.Paths;
@@ -10,7 +9,6 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
-import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -24,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 
 @Autonomous(name = "ExampleAuto", group = "Autonomous")
-public class RedSideHiveUp extends LinearOpMode {
+public class RedSideHiveUpAroundHive extends LinearOpMode {
 
     private Follower follower;
     private DcMotor shooter = null;
@@ -46,6 +44,7 @@ public class RedSideHiveUp extends LinearOpMode {
     private final Pose point2Control3 = poseFactory.of(57.1623, 116.4894, 0);
     private final Pose point2Segment2Start = poseFactory.of(57.2, 130.8641, -109.5222);
     private final Pose point2Segment2End = poseFactory.of(57.2, 130.8641, 90);
+    private final Pose point3 = poseFactory.of(12.6822, 113.8132, 20.9575);
 
 
 
@@ -132,7 +131,8 @@ public class RedSideHiveUp extends LinearOpMode {
                 ShootBall(),
                 ShootBall(),
                 ShootBall(),
-                ShootBall()
+                ShootBall(),
+                follow(follower, path3())
         );
     }
 
@@ -176,4 +176,9 @@ public class RedSideHiveUp extends LinearOpMode {
 
     public Path path2() {
         return Paths.curve(path1, point2Control1, point2Control2, point2Control3, point2).heading(Interpolator.piecewise().until(0.3, Interpolator.tangent.reverse()).until(1, Interpolator.linear(point2Segment2Start, point2Segment2End)));
-    }}
+    }
+    public Path path3() {
+        return Paths.line(point2, point3).reverseTangent();
+    }
+
+}
