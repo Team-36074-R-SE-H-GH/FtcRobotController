@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -121,5 +121,5 @@ public class TestRedAuto extends LinearOpMode {
     public Path path3() {
         return Paths.curve(point2, point3Control1, point3Control2, point3).linear(point2, point3);
     }
-}
+}*/
 

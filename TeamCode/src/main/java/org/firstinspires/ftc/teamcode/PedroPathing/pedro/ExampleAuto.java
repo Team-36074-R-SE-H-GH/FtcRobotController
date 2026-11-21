@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import com.pedropathing.api.Paths;
 
@@ -183,3 +183,4 @@ public class ExampleAuto extends LinearOpMode {
         return Paths.curve(point3, point4Control1, point4Control2, point4).constant(point4);
     }
 }
+*/

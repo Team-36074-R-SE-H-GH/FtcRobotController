@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
@@ -78,4 +78,4 @@ public class Goofy extends LinearOpMode {
     public Path path3() {
         return Paths.curve(point2, point3Control1, point3).reverseTangent();
     }
-}
+}*/

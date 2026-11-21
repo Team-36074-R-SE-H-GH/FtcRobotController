@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import com.pedropathing.api.Paths;
 
@@ -176,4 +176,4 @@ public class RedSideHiveUp extends LinearOpMode {
 
     public Path path2() {
         return Paths.curve(path1, point2Control1, point2Control2, point2Control3, point2).heading(Interpolator.piecewise().until(0.3, Interpolator.tangent.reverse()).until(1, Interpolator.linear(point2Segment2Start, point2Segment2End)));
-    }}
+    }}*/

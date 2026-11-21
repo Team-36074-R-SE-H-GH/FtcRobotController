@@ -31,12 +31,14 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -71,7 +73,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
+@Configurable
 @TeleOp(name="TrueNorth", group="Linear OpMode")
 public class TrueNorth extends LinearOpMode {
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
@@ -81,9 +83,16 @@ public class TrueNorth extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor pollen_shooter = null;
+    private DcMotorEx pollen_shooter = null;
+    private DcMotorEx nectar_shooter = null;
     private DcMotor intake = null;
-    private CRServo indexer;
+    private DcMotor indexer = null;
+    private Servo left_servo = null;
+    private Servo right_servo = null;
+    public static double pollenShooterTargetTPS = 1375;
+    public static double nectarShooterTargetTPS = 1400;
+    public static double leftservopos = 0.2;
+    public static double rightservopos = 0.8;
 
     private IMU imu;
     //private DcMotor frontLeft, frontRight;
@@ -104,8 +113,11 @@ public class TrueNorth extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        pollen_shooter = hardwareMap.get(DcMotor.class, "pollen_shooter");
-        //indexer = hardwareMap.get(CRServo.class, "indexer");
+        pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        nectar_shooter = hardwareMap.get(DcMotorEx.class, "nectar_shooter");
+        right_servo = hardwareMap.get(Servo.class, "right_servo");
+        left_servo = hardwareMap.get(Servo.class, "left_servo");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -123,6 +135,12 @@ public class TrueNorth extends LinearOpMode {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         pollen_shooter.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
+        nectar_shooter.setDirection(DcMotor.Direction.REVERSE);
+        pollen_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pollen_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pollen_shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        nectar_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        nectar_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -236,14 +254,31 @@ public class TrueNorth extends LinearOpMode {
                 indexer.setPower(-0.5);
             }*/
             if(gamepad1.b){
-                pollen_shooter.setPower(0.513367350384756385739689023897934876938475938754609234968749568729348679234786);
+                pollen_shooter.setVelocity(pollenShooterTargetTPS);
+                nectar_shooter.setVelocity(nectarShooterTargetTPS);
             }
             else{
-                pollen_shooter.setPower(0);
+                pollen_shooter.setVelocity(-300);
+                nectar_shooter.setVelocity(0);
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
                 telemetry.update();
+            }
+            if(gamepad1.dpad_right){
+                indexer.setPower(-0.8);
+            }
+            else{
+                indexer.setPower(0.5);
+            }
+            if(gamepad1.left_bumper){
+                left_servo.setPosition(leftservopos);
+                right_servo.setPosition(rightservopos);
+
+            }
+            else{
+                left_servo.setPosition(1);
+                right_servo.setPosition(0);
             }
 
             if(gamepad1.left_trigger_pressed){
@@ -280,6 +315,9 @@ public class TrueNorth extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.addData("Current Max Speed", "%4.2f", drive_speed_max);
+            telemetry.addData("Target TPS", pollenShooterTargetTPS);
+            telemetry.addData("Actual TPS", pollen_shooter.getVelocity());
+            telemetry.addData("Distance to Blue Hive", aprilTagWebcam.distance_to_raised_hive_blue());
             telemetry.update();
         }
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
@@ -119,3 +119,4 @@ public class AutoPath extends LinearOpMode {
     }
 }
 
+*/
