@@ -31,11 +31,12 @@ public class RedSideHiveUpThroughHive extends LinearOpMode {
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     private final PoseFactory poseFactory = PoseFactory.degrees();
     private final Pose start = poseFactory.of(56, 8, 270);
-    private final Pose path1 = poseFactory.of(12.2731, 48.4251, 180);
+    private final Pose path1 = poseFactory.of(13.2289, 46.9915, 180);
+    private final Pose path1Control1 = poseFactory.of(63, 43.17, 0);
     private final Pose point2 = poseFactory.of(58.3383, 130.8478, -270);
     private final Pose point2Control1 = poseFactory.of(77.4963, 0, 0);
     private final Pose point2Segment1Heading = poseFactory.of(58.3383, 130.8478, 180);
-    private final Pose point2Segment3Start = poseFactory.of(58.3383, 130.8478, -98.1518);
+    private final Pose point2Segment3Start = poseFactory.of(58.3383, 130.8478, -97.6094);
     private final Pose point2Segment3End = poseFactory.of(58.3383, 130.8478, 90);
     private final Pose point3 = poseFactory.of(11.3107, 118.1459, -164.8853);
 
