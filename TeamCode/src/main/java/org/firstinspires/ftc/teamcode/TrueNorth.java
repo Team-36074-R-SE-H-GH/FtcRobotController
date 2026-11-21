@@ -280,6 +280,9 @@ public class TrueNorth extends LinearOpMode {
                 left_servo.setPosition(1);
                 right_servo.setPosition(0);
             }
+            while(gamepad1.rightBumperWasPressed()){
+                intake.setPower(-1);
+            }
 
             if(gamepad1.left_trigger_pressed){
                 if(aprilTagWebcam.apriltagangle(id30) < -5){
