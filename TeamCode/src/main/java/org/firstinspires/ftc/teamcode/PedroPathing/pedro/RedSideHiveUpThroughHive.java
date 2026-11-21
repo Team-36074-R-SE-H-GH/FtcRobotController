@@ -1,5 +1,4 @@
-
-/*package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
+package org.firstinspires.ftc.teamcode.PedroPathing.pedro;
 
 import com.pedropathing.api.Paths;
 
@@ -10,7 +9,6 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
-import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -23,8 +21,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 
-@Autonomous(name = "ExampleAuto", group = "Autonomous")
-public class RedSideHiveUp extends LinearOpMode {
+@Autonomous(name = "RedSideHiveUpThroughHive", group = "Autonomous")
+public class RedSideHiveUpThroughHive extends LinearOpMode {
 
     private Follower follower;
     private DcMotor shooter = null;
@@ -32,21 +30,14 @@ public class RedSideHiveUp extends LinearOpMode {
     private DcMotor intake = null;
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     private final PoseFactory poseFactory = PoseFactory.degrees();
-
-    private final Pose start = poseFactory.of(57.4337, 9.4337, 90);
-    private final Pose path1 = poseFactory.of(8.3462, 50.0977, 180);
-    private final Pose path1Control1 = poseFactory.of(47.074, 45.7891, 0);
-    private final Pose path1Segment1Start = poseFactory.of(8.3462, 50.0977, 90);
-    private final Pose path1Segment1End = poseFactory.of(8.3462, 50.0977, 180);
-    private final Pose path1Segment2Start = poseFactory.of(8.3462, 50.0977, 180);
-    private final Pose path1Segment2End = poseFactory.of(8.3462, 50.0977, 180);
-    private final Pose point2 = poseFactory.of(57.2, 130.8641, -270);
-    private final Pose point2Control1 = poseFactory.of(45.7143, 49.7886, 0);
-    private final Pose point2Control2 = poseFactory.of(20.8304, 119.7622, 0);
-    private final Pose point2Control3 = poseFactory.of(57.1623, 116.4894, 0);
-    private final Pose point2Segment2Start = poseFactory.of(57.2, 130.8641, -109.5222);
-    private final Pose point2Segment2End = poseFactory.of(57.2, 130.8641, 90);
-
+    private final Pose start = poseFactory.of(56, 8, 270);
+    private final Pose path1 = poseFactory.of(12.2731, 48.4251, 180);
+    private final Pose point2 = poseFactory.of(58.3383, 130.8478, -270);
+    private final Pose point2Control1 = poseFactory.of(77.4963, 0, 0);
+    private final Pose point2Segment1Heading = poseFactory.of(58.3383, 130.8478, 180);
+    private final Pose point2Segment3Start = poseFactory.of(58.3383, 130.8478, -98.1518);
+    private final Pose point2Segment3End = poseFactory.of(58.3383, 130.8478, 90);
+    private final Pose point3 = poseFactory.of(11.3107, 118.1459, -164.8853);
 
 
 
@@ -132,7 +123,10 @@ public class RedSideHiveUp extends LinearOpMode {
                 ShootBall(),
                 ShootBall(),
                 ShootBall(),
-                ShootBall()
+                ShootBall(),
+                follow(follower, path3())
+
+
         );
     }
 
@@ -171,9 +165,13 @@ public class RedSideHiveUp extends LinearOpMode {
     }
 
     public Path path1() {
-        return Paths.curve(start, path1Control1, path1).heading(Interpolator.piecewise().until(0.7, Interpolator.linear(path1Segment1Start, path1Segment1End)).until(1, Interpolator.linear(path1Segment2Start, path1Segment2End)));
+        return Paths.line(start, path1).linear(start, path1);
     }
 
     public Path path2() {
-        return Paths.curve(path1, point2Control1, point2Control2, point2Control3, point2).heading(Interpolator.piecewise().until(0.3, Interpolator.tangent.reverse()).until(1, Interpolator.linear(point2Segment2Start, point2Segment2End)));
-    }}*/
+        return Paths.curve(path1, point2Control1, point2).heading(Interpolator.piecewise().until(0.1803, Interpolator.constant(point2Segment1Heading)).until(0.5, Interpolator.tangent.reverse()).until(1, Interpolator.linear(point2Segment3Start, point2Segment3End)));
+    }
+
+    public Path path3() {
+        return Paths.line(point2, point3).tangent();
+    }}
