@@ -229,17 +229,20 @@ public class TrueNorth extends LinearOpMode {
             if(gamepad1.right_trigger_pressed&&intake_toggled==0){
                 intake_toggled = 1;
                 if(intake_state == 0){
-                    intake.setPower(1);
+                        intake.setPower(1);
 
-                    intake_state = 1;
-                }else{
-                    intake.setPower(0);
+                        intake_state = 1;
+                    }else{
+                        intake.setPower(0);
 
-                    intake_state = 0;
+                        intake_state = 0;
                 }
 
             }else if(!gamepad1.right_trigger_pressed){
                 intake_toggled = 0;
+            }
+            if(gamepad1.right_bumper) {
+                intake.setPower(-1);
             }
             if (gamepad1.left_stick_button){
                 drive_speed_max = 0.25;
@@ -253,18 +256,20 @@ public class TrueNorth extends LinearOpMode {
             else{
                 indexer.setPower(-0.5);
             }*/
+
             if(gamepad1.b){
                 pollen_shooter.setVelocity(pollenShooterTargetTPS);
-                nectar_shooter.setVelocity(nectarShooterTargetTPS);
+                //nectar_shooter.setVelocity(nectarShooterTargetTPS);
             }
             else{
-                pollen_shooter.setVelocity(-300);
+                pollen_shooter.setVelocity(-0);
                 nectar_shooter.setVelocity(0);
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
                 telemetry.update();
             }
+            //CHECK THIS!!!!!!!!!!!!!!!!!
             if(gamepad1.dpad_right){
                 indexer.setPower(-0.8);
             }
@@ -280,9 +285,8 @@ public class TrueNorth extends LinearOpMode {
                 left_servo.setPosition(1);
                 right_servo.setPosition(0);
             }
-            while(gamepad1.rightBumperWasPressed()){
-                intake.setPower(-1);
-            }
+
+
 
             if(gamepad1.left_trigger_pressed){
                 if(aprilTagWebcam.apriltagangle(id30) < -5){
