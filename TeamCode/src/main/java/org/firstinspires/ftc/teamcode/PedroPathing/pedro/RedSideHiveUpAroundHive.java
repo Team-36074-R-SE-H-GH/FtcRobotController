@@ -154,6 +154,7 @@ public class RedSideHiveUpAroundHive extends LinearOpMode {
                 stopPollenShooter(),
                 follow(follower, path1()),
                 follow(follower, path2()),
+                moveflowerthingup(),
                 follow(follower, path3()),
                 startPollenShooter(),
                 wait_time(1.75),
