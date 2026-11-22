@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AprilTagWebcam;
@@ -25,9 +27,12 @@ import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 public class RedSideHiveUpAroundHive extends LinearOpMode {
 
     private Follower follower;
-    private DcMotor shooter = null;
-    private CRServo indexer;
+    private DcMotorEx pollen_shooter = null;
+    private DcMotor indexer = null;
     private DcMotor intake = null;
+    private Servo left_servo = null;
+    private Servo right_servo = null;
+
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
@@ -48,35 +53,47 @@ public class RedSideHiveUpAroundHive extends LinearOpMode {
     private final Pose point4 = poseFactory.of(11.2486, 116.9195, 11.7338);
 
 
-
-
     // Autonomous routine
-    public Command runIndexerForward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+    public Command runIndexerForward() {
 
         return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
+                .setStart(() -> indexer.setPower(0.8))
+                .setDone(() -> true);
+
     }
-    public Command runIndexerBackward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+    public Command runIndexerBackward() {
 
         return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(-0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
+                .setStart(() -> indexer.setPower(-0.8))
+                .setDone(() -> true);
     }
-    public Command ShootBall(){
-        return sequential(
-                runIndexerForward(indexer),
-                runIndexerBackward(indexer)
-        );
+    public Command startPollenShooter(){
+        return Command.build()
+                .setStart(() -> pollen_shooter.setVelocity(1390))
+                .setDone(() -> true);
     }
+    public Command stopPollenShooter(){
+        return Command.build()
+                .setStart(() -> pollen_shooter.setVelocity(0))
+                .setDone(() -> true);
+    }
+    public Command moveflowerthingdown() {
+        return Command.build()
+                .setStart(() -> {
+                    left_servo.setPosition(0.2);
+                    right_servo.setPosition(0.8);
+                })
+                .setDone(() -> true);
+    }
+    public Command moveflowerthingup() {
+        return Command.build()
+                .setStart(() -> {
+                    left_servo.setPosition(1);
+                    right_servo.setPosition(0);
+                })
+                .setDone(() -> true);
+    }
+
     public Command wait_until_tippedrs() {
         boolean[] is_down = {false};
 
@@ -119,21 +136,30 @@ public class RedSideHiveUpAroundHive extends LinearOpMode {
                 })
                 .setDone(() -> is_down[0]);
     }
+    public Command wait_time(double seconds){
+        ElapsedTime timer = new ElapsedTime();
+        return Command.build()
+                .setDone(() -> timer.seconds() >= seconds)
+                .requiring(seconds);
+
+    }
 
 
     public Command autoRoutine() {
         return sequential(
-                ShootBall(),
-                ShootBall(),
-                ShootBall(),
-                ShootBall(),
+                startPollenShooter(),
+                wait_time(1.75),
+                runIndexerForward(),
+                wait_time(6),
+                stopPollenShooter(),
                 follow(follower, path1()),
                 follow(follower, path2()),
                 follow(follower, path3()),
-                ShootBall(),
-                ShootBall(),
-                ShootBall(),
-                ShootBall(),
+                startPollenShooter(),
+                wait_time(1.75),
+                runIndexerForward(),
+                wait_time(6),
+                stopPollenShooter(),
                 follow(follower, path4())
         );
     }
@@ -142,15 +168,22 @@ public class RedSideHiveUpAroundHive extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         aprilTagWebcam.init(hardwareMap, telemetry);
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter.setPower(0.76);
+        pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        left_servo = hardwareMap.get(Servo.class, "left_servo");
+        right_servo = hardwareMap.get(Servo.class, "right_servo");
         intake.setPower(0.7);
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();
         aprilTagWebcam.update();
+        pollen_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pollen_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_servo.setPosition(1);
+        right_servo.setPosition(0);
+        waitForStart();
+        schedule(autoRoutine());
 
         waitForStart();
         schedule(autoRoutine());
