@@ -24,87 +24,108 @@ import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 @Autonomous(name = "ExampleAuto", group = "Autonomous")
 public class ExampleAuto extends LinearOpMode {
 
-    private Follower follower;
-    private DcMotor shooter = null;
-    private CRServo indexer;
-    private DcMotor intake = null;
-    AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
-    private final PoseFactory poseFactory = PoseFactory.degrees();
+        private Follower follower;
+        private DcMotor shooter = null;
+        private CRServo indexer;
+        private DcMotor intake = null;
+        AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
+        private final PoseFactory poseFactory = PoseFactory.degrees();
 
     ALL POINTS GO HERE
 
 
 
 
-    // Autonomous routine
-    public Command runIndexerForward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+      // Autonomous routine
+       public Command runIndexerForward() {
 
-        return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
-    }
-    public Command runIndexerBackward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+           return Command.build()
+                   .setStart(() -> indexer.setPower(0.8))
+                   .setDone(() -> true);
 
-        return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(-0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
-    }
-    public Command ShootBall(){
-        return sequential(
-                runIndexerForward(indexer),
-                runIndexerBackward(indexer)
-        );
-    }
-    public Command wait_until_tippedrs() {
-        boolean[] is_down = {false};
+       }
+       public Command runIndexerBackward() {
 
-        return Command.build()
-                .setExecute(() -> {
-                    aprilTagWebcam.update();
-                    is_down[0] = aprilTagWebcam.is_red_scoring_down();
-                })
-                .setDone(() -> is_down[0]);
-    }
-    public Command wait_until_tippedra() {
-        boolean[] is_down = {false};
+           return Command.build()
+                   .setStart(() -> indexer.setPower(-0.8))
+                   .setDone(() -> true);
+       }
+       public Command startPollenShooter(){
+           return Command.build()
+                   .setStart(() -> pollen_shooter.setVelocity(1390))
+                   .setDone(() -> true);
+       }
+       public Command stopPollenShooter(){
+           return Command.build()
+                   .setStart(() -> pollen_shooter.setVelocity(0))
+                   .setDone(() -> true);
+       }
+       public Command moveflowerthingdown() {
+           return Command.build()
+                   .setStart(() -> {
+                       left_servo.setPosition(0.2);
+                       right_servo.setPosition(0.8);
+                   })
+                   .setDone(() -> true);
+       }
+       public Command moveflowerthingup() {
+           return Command.build()
+                   .setStart(() -> {
+                       left_servo.setPosition(1);
+                       right_servo.setPosition(0);
+                   })
+                   .setDone(() -> true);
+       }
 
-        return Command.build()
-                .setExecute(() -> {
-                    aprilTagWebcam.update();
-                    is_down[0] = aprilTagWebcam.is_red_audience_down();
-                })
-                .setDone(() -> is_down[0]);
-    }
+       public Command wait_until_tippedrs() {
+           boolean[] is_down = {false};
 
-    public Command wait_until_tippedbs() {
-        boolean[] is_down = {false};
+           return Command.build()
+                   .setExecute(() -> {
+                       aprilTagWebcam.update();
+                       is_down[0] = aprilTagWebcam.is_red_scoring_down();
+                   })
+                   .setDone(() -> is_down[0]);
+       }
+       public Command wait_until_tippedra() {
+           boolean[] is_down = {false};
 
-        return Command.build()
-                .setExecute(() -> {
-                    aprilTagWebcam.update();
-                    is_down[0] = aprilTagWebcam.is_blue_scoring_down();
-                })
-                .setDone(() -> is_down[0]);
-    }
+           return Command.build()
+                   .setExecute(() -> {
+                       aprilTagWebcam.update();
+                       is_down[0] = aprilTagWebcam.is_red_audience_down();
+                   })
+                   .setDone(() -> is_down[0]);
+       }
 
-    public Command wait_until_tippedba() {
-        boolean[] is_down = {false};
+       public Command wait_until_tippedbs() {
+           boolean[] is_down = {false};
 
-        return Command.build()
-                .setExecute(() -> {
-                    aprilTagWebcam.update();
-                    is_down[0] = aprilTagWebcam.is_blue_audience_down();
-                })
-                .setDone(() -> is_down[0]);
-    }
+           return Command.build()
+                   .setExecute(() -> {
+                       aprilTagWebcam.update();
+                       is_down[0] = aprilTagWebcam.is_blue_scoring_down();
+                   })
+                   .setDone(() -> is_down[0]);
+       }
+
+       public Command wait_until_tippedba() {
+           boolean[] is_down = {false};
+
+           return Command.build()
+                   .setExecute(() -> {
+                       aprilTagWebcam.update();
+                       is_down[0] = aprilTagWebcam.is_blue_audience_down();
+                   })
+                   .setDone(() -> is_down[0]);
+       }
+       public Command wait_time(double seconds){
+           ElapsedTime timer = new ElapsedTime();
+           return Command.build()
+                   .setDone(() -> timer.seconds() >= seconds)
+                   .requiring(seconds);
+
+       }
 
 
     public Command autoRoutine() {
@@ -113,39 +134,46 @@ public class ExampleAuto extends LinearOpMode {
         );
     }
 
-    @Override
-    public void runOpMode() {
-        Scheduler.reset();
-        aprilTagWebcam.init(hardwareMap, telemetry);
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter.setPower(0.76);
-        intake.setPower(0.7);
-        follower = Constants.create(hardwareMap);
-        follower.setPose(start);
-        follower.update();
-        aprilTagWebcam.update();
+      @Override
+         public void runOpMode() {
+             Scheduler.reset();
+             aprilTagWebcam.init(hardwareMap, telemetry);
+             pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+             indexer = hardwareMap.get(DcMotor.class, "indexer");
+             intake = hardwareMap.get(DcMotor.class, "intake");
+             left_servo = hardwareMap.get(Servo.class, "left_servo");
+             right_servo = hardwareMap.get(Servo.class, "right_servo");
+             intake.setPower(0.7);
+             follower = Constants.create(hardwareMap);
+             follower.setPose(start);
+             follower.update();
+             aprilTagWebcam.update();
+             pollen_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+             pollen_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+             left_servo.setPosition(1);
+             right_servo.setPosition(0);
+             waitForStart();
+             schedule(autoRoutine());
 
-        waitForStart();
-        schedule(autoRoutine());
+             waitForStart();
+             schedule(autoRoutine());
 
-        while (opModeIsActive()) {
-            follower.update();
-            Scheduler.execute();
+             while (opModeIsActive()) {
+                 follower.update();
+                 Scheduler.execute();
 
-            telemetry.addData("x", follower.pose().x());
-            telemetry.addData("y", follower.pose().y());
-            telemetry.addData("heading", follower.pose().heading());
+                 telemetry.addData("x", follower.pose().x());
+                 telemetry.addData("y", follower.pose().y());
+                 telemetry.addData("heading", follower.pose().heading());
 
-            if (follower.currentPath() != null) {
-                telemetry.addData("Current path distance remaining", follower.distanceToEndpoint());
-                telemetry.addData("Path number", follower.pathIndex());
-            }
+                 if (follower.currentPath() != null) {
+                     telemetry.addData("Current path distance remaining", follower.distanceToEndpoint());
+                     telemetry.addData("Path number", follower.pathIndex());
+                 }
 
-            telemetry.update();
-        }
-    }
+                 telemetry.update();
+             }
+         }
 
     PATH FUNCTIONS GO HERE
 }
