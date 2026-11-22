@@ -260,10 +260,12 @@ public class TrueNorth extends LinearOpMode {
             if(gamepad1.b){
                 pollen_shooter.setVelocity(pollenShooterTargetTPS);
                 //nectar_shooter.setVelocity(nectarShooterTargetTPS);
+                indexer.setPower(.5);
             }
             else{
                 pollen_shooter.setVelocity(-0);
                 nectar_shooter.setVelocity(0);
+                indexer.setPower(-0.8);
             }
             if(gamepad1.dpadUpWasPressed()){
                 reset_yaw();
