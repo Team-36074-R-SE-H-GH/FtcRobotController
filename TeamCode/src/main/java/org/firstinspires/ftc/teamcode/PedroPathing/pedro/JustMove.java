@@ -17,7 +17,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.tree.DCTree;
 
 import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 
@@ -25,8 +27,8 @@ import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 public class JustMove extends LinearOpMode {
 
     private Follower follower;
-    private DcMotor shooter = null;
-    private CRServo indexer;
+    private DcMotor pollen_shooter = null;
+    private DcMotor indexer;
     private DcMotor intake = null;
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     private final PoseFactory poseFactory = PoseFactory.degrees();
@@ -38,32 +40,7 @@ public class JustMove extends LinearOpMode {
 
 
     // Autonomous routine
-    public Command runIndexerForward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
 
-        return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
-    }
-    public Command runIndexerBackward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
-
-        return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(-0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
-    }
-    public Command ShootBall(){
-        return sequential(
-                runIndexerForward(indexer),
-                runIndexerBackward(indexer)
-        );
-    }
     public Command wait_until_tippedrs() {
         boolean[] is_down = {false};
 
@@ -118,11 +95,9 @@ public class JustMove extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         aprilTagWebcam.init(hardwareMap, telemetry);
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter.setPower(0.76);
-        intake.setPower(0.7);
+        pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();

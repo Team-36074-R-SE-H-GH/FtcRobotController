@@ -89,10 +89,11 @@ public class TrueNorth extends LinearOpMode {
     private DcMotor indexer = null;
     private Servo left_servo = null;
     private Servo right_servo = null;
-    public static double pollenShooterTargetTPS = 1375;
+    public static double pollenShooterTargetTPS = 1390;
     public static double nectarShooterTargetTPS = 1400;
-    public static double leftservopos = 0.2;
-    public static double rightservopos = 0.8;
+    public static double leftservopos = 0.525;
+    public static double rightservopos = 0.475;
+
 
     private IMU imu;
     //private DcMotor frontLeft, frontRight;
@@ -272,9 +273,13 @@ public class TrueNorth extends LinearOpMode {
             //CHECK THIS!!!!!!!!!!!!!!!!!
             if(gamepad1.dpad_right){
                 indexer.setPower(-0.8);
+                pollen_shooter.setVelocity(-600);
+            }
+            else if(gamepad1.b){
+                indexer.setPower(0.8);
             }
             else{
-                indexer.setPower(0.5);
+                indexer.setPower(0);
             }
             if(gamepad1.left_bumper){
                 left_servo.setPosition(leftservopos);

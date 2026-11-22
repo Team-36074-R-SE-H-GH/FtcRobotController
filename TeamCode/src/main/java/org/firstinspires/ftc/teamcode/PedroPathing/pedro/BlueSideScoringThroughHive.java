@@ -17,59 +17,79 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AprilTagWebcam;
 
 @Autonomous(name = "BlueSideScoringThroughHive", group = "Autonomous")
 public class BlueSideScoringThroughHive extends LinearOpMode {
-
     private Follower follower;
-    private DcMotor shooter = null;
-    private CRServo indexer;
+    private DcMotorEx pollen_shooter = null;
+    private DcMotor indexer = null;
     private DcMotor intake = null;
+    private Servo left_servo = null;
+    private Servo right_servo = null;
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose start = poseFactory.of(81.3745, 129.7975, -270);
-    private final Pose path1 = poseFactory.of(80.7774, 17.2925, 270);
-    private final Pose path1Control1 = poseFactory.of(61.3963, 88.6614, 0);
-    private final Pose point2Start = poseFactory.of(80.7774, 17.2925, 270);
-    private final Pose point2 = poseFactory.of(93.1014, 16.9139, 270);
-    private final Pose point3Start = poseFactory.of(93.1014, 16.9139, 270);
-    private final Pose point3 = poseFactory.of(80.9438, 17.6396, 270);
-    private final Pose point4 = poseFactory.of(127.2279, 25.771, -170.0357);
+    private final Pose start = poseFactory.of(79.4458, 129.9728, 90);
+    private final Pose path1 = poseFactory.of(112.2511, 96.1958, 0);
+    private final Pose path1Control1 = poseFactory.of(89.8015, 106.1955, 0);
+    private final Pose point2 = poseFactory.of(126.2248, 95.8403, -1.4575);
+    private final Pose point3 = poseFactory.of(118.5385, 96.1307, -2.164);
+    private final Pose path3Start = poseFactory.of(118.5385, 96.1307, 0);
+    private final Pose path3 = poseFactory.of(84.159, 18.5796, 270);
+    private final Pose path3Control1 = poseFactory.of(106.8095, 12.7531, 0);
+    private final Pose path4Start = poseFactory.of(84.159, 18.5796, 270);
+    private final Pose path4 = poseFactory.of(130.1269, 22.6368, 270);
+
 
 
 
 
     // Autonomous routine
-    public Command runIndexerForward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+    public Command runIndexerForward() {
 
         return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
+                .setStart(() -> indexer.setPower(0.8))
+                .setDone(() -> true);
+
     }
-    public Command runIndexerBackward(CRServo indexer) {
-        ElapsedTime timer = new ElapsedTime();
+    public Command runIndexerBackward() {
 
         return Command.build()
-                .setStart(() -> timer.reset())
-                .setExecute(() -> indexer.setPower(-0.4))
-                .setDone(() -> timer.seconds() >= 1)
-                .setEnd(endCondition -> indexer.setPower(0))
-                .requiring(indexer);
+                .setStart(() -> indexer.setPower(-0.8))
+                .setDone(() -> true);
     }
-    public Command ShootBall(){
-        return sequential(
-                runIndexerForward(indexer),
-                runIndexerBackward(indexer)
-        );
+    public Command startPollenShooter(){
+        return Command.build()
+                .setStart(() -> pollen_shooter.setVelocity(1375))
+                .setDone(() -> true);
     }
+    public Command stopPollenShooter(){
+        return Command.build()
+                .setStart(() -> pollen_shooter.setVelocity(0))
+                .setDone(() -> true);
+    }
+    public Command moveflowerthingdown() {
+        return Command.build()
+                .setStart(() -> {
+                    left_servo.setPosition(0.2);
+                    right_servo.setPosition(0.8);
+                })
+                .setDone(() -> true);
+    }
+    public Command moveflowerthingup() {
+        return Command.build()
+                .setStart(() -> {
+                    left_servo.setPosition(1);
+                    right_servo.setPosition(0);
+                })
+                .setDone(() -> true);
+    }
+
     public Command wait_until_tippedrs() {
         boolean[] is_down = {false};
 
@@ -112,16 +132,35 @@ public class BlueSideScoringThroughHive extends LinearOpMode {
                 })
                 .setDone(() -> is_down[0]);
     }
+    public Command wait_time(double seconds){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        return Command.build()
+                .setDone(() -> timer.seconds() >= seconds)
+                .requiring(seconds);
+
+    }
+
 
 
     public Command autoRoutine() {
         return sequential(
-                wait_until_tippedbs(),
-                ShootBall(),
+                startPollenShooter(),
+                wait_time(1.75),
+                runIndexerForward(),
+                wait_time(6),
+                stopPollenShooter(),
+                moveflowerthingdown(),
                 follow(follower, path1()),
                 follow(follower, path2()),
+                wait_time(3),
                 follow(follower, path3()),
-                ShootBall(),
+                moveflowerthingup(),
+                follow(follower, path3_2()),
+                startPollenShooter(),
+                wait_time(1),
+                runIndexerForward(),
+                wait_time(6),
                 follow(follower, path4())
         );
     }
@@ -130,16 +169,20 @@ public class BlueSideScoringThroughHive extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         aprilTagWebcam.init(hardwareMap, telemetry);
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        indexer = hardwareMap.get(CRServo.class, "indexer");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        shooter.setPower(0.76);
+        pollen_shooter = hardwareMap.get(DcMotorEx.class, "pollen_shooter");
+        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        left_servo = hardwareMap.get(Servo.class, "left_servo");
+        right_servo = hardwareMap.get(Servo.class, "right_servo");
         intake.setPower(0.7);
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();
         aprilTagWebcam.update();
-
+        pollen_shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pollen_shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_servo.setPosition(1);
+        right_servo.setPosition(0);
         waitForStart();
         schedule(autoRoutine());
 
@@ -165,14 +208,18 @@ public class BlueSideScoringThroughHive extends LinearOpMode {
     }
 
     public Path path2() {
-        return Paths.line(point2Start, point2).linear(point2Start, point2);
+        return Paths.line(path1, point2).tangent();
     }
 
     public Path path3() {
-        return Paths.line(point3Start, point3).linear(point3Start, point3);
+        return Paths.line(point2, point3).reverseTangent();
+    }
+
+    public Path path3_2() {
+        return Paths.curve(path3Start, path3Control1, path3).linear(path3Start, path3);
     }
 
     public Path path4() {
-        return Paths.line(point3, point4).reverseTangent();
+        return Paths.line(path4Start, path4).linear(path4Start, path4);
     }
 }
